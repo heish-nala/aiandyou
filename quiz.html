@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What Could AI Do For Your Life?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1a1a2e;
+      --ink-light: #4a4a5a;
+      --ink-muted: #8a8a9a;
+      --cream: #faf9f7;
+      --white: #fff;
+      --accent: #2d5a4a;
+      --accent-light: #e8f0ed;
+      --border: #e5e5e0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--cream);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: var(--ink);
+    }
+
+    .quiz-container {
+      width: 100%;
+      max-width: 600px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px;
+      box-shadow: 0 4px 24px rgba(26,26,46,.08);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-bottom: 40px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    .question-screen {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .question-screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .question-number {
+      font-size: 14px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .question-text {
+      font-family: 'Instrument Serif', serif;
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 1.3;
+      margin-bottom: 32px;
+      color: var(--ink);
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option {
+      padding: 18px 24px;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 16px;
+      color: var(--ink-light);
+      text-align: left;
+    }
+
+    .option:hover {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      transform: translateX(4px);
+      color: var(--ink);
+    }
+
+    .option.selected {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      color: var(--ink);
+    }
+
+    /* Intro Screen */
+    .intro-screen {
+      text-align: center;
+    }
+
+    .intro-screen h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 40px;
+      font-weight: 400;
+      margin-bottom: 16px;
+      color: var(--ink);
+    }
+
+    .intro-screen h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .intro-screen p {
+      font-size: 18px;
+      color: var(--ink-light);
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .btn {
+      padding: 16px 32px;
+      background: var(--ink);
+      border: none;
+      border-radius: 12px;
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 40px rgba(45, 90, 74, 0.2);
+    }
+
+    /* Email Capture */
+    .email-screen {
+      text-align: center;
+    }
+
+    .email-screen h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 32px;
+      font-weight: 400;
+      margin-bottom: 12px;
+      color: var(--ink);
+    }
+
+    .email-screen p {
+      color: var(--ink-light);
+      margin-bottom: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--ink-light);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 16px;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--ink);
+      font-size: 16px;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: var(--white);
+    }
+
+    .form-group input::placeholder {
+      color: var(--ink-muted);
+    }
+
+    .email-note {
+      font-size: 13px;
+      color: var(--ink-muted);
+      margin-top: 16px;
+    }
+
+    /* Results Screen */
+    .results-screen {
+      text-align: center;
+    }
+
+    .result-badge {
+      display: inline-block;
+      padding: 8px 20px;
+      background: var(--accent);
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+      color: var(--white);
+    }
+
+    .results-screen h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 32px;
+      font-weight: 400;
+      margin-bottom: 20px;
+      line-height: 1.3;
+      color: var(--ink);
+    }
+
+    .results-screen .description {
+      font-size: 17px;
+      color: var(--ink-light);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    .motivation-callout {
+      background: var(--accent-light);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .motivation-callout p {
+      font-size: 16px;
+      color: var(--ink);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .motivation-callout strong {
+      color: var(--accent);
+    }
+
+    .use-cases {
+      text-align: left;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .use-cases h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+
+    .use-cases ul {
+      list-style: none;
+    }
+
+    .use-cases li {
+      padding: 10px 0;
+      padding-left: 28px;
+      position: relative;
+      color: var(--ink-light);
+      font-size: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .use-cases li:last-child {
+      border-bottom: none;
+    }
+
+    .use-cases li::before {
+      content: "\2192";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .features {
+      text-align: left;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .features h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+
+    .features ul {
+      list-style: none;
+    }
+
+    .features li {
+      padding: 10px 0;
+      padding-left: 28px;
+      position: relative;
+      color: var(--ink-light);
+      font-size: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .features li:last-child {
+      border-bottom: none;
+    }
+
+    .features li::before {
+      content: "\2713";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .price {
+      font-size: 14px;
+      color: var(--ink-muted);
+      margin-top: 16px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 40px;
+    }
+
+    .loading-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+
+    .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+    .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    @media (max-width: 480px) {
+      .quiz-container {
+        padding: 32px 24px;
+      }
+
+      .intro-screen h1 {
+        font-size: 32px;
+      }
+
+      .question-text {
+        font-size: 22px;
+      }
+
+      .results-screen h2 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress" style="width: 0%"></div>
+    </div>
+
+    <!-- Intro Screen -->
+    <div class="question-screen active intro-screen" id="intro">
+      <h1>What could AI do for <em>your</em> life?</h1>
+      <p>Take 2 minutes to find out—plus get a personalized recommendation for where to start.</p>
+      <button class="btn" onclick="startQuiz()">Let's find out →</button>
+    </div>
+
+    <!-- Question 1: Motivation -->
+    <div class="question-screen" id="q1">
+      <div class="question-number">Question 1 of 6</div>
+      <div class="question-text">If you could save 10 hours a week, what would you do with that time?</div>
+      <div class="options">
+        <div class="option" data-value="family" onclick="selectOption(this, 1)">Spend it with family, friends, or people I care about</div>
+        <div class="option" data-value="career" onclick="selectOption(this, 1)">Get ahead at work—become the person everyone turns to</div>
+        <div class="option" data-value="project" onclick="selectOption(this, 1)">Finally start that project or idea I've been sitting on</div>
+        <div class="option" data-value="breathing" onclick="selectOption(this, 1)">Honestly, I'd just like some breathing room</div>
+      </div>
+    </div>
+
+    <!-- Question 2: Current State -->
+    <div class="question-screen" id="q2">
+      <div class="question-number">Question 2 of 6</div>
+      <div class="question-text">How are you using AI right now?</div>
+      <div class="options">
+        <div class="option" data-value="barely" onclick="selectOption(this, 2)">I've barely touched it—maybe tried ChatGPT once or twice</div>
+        <div class="option" data-value="surface" onclick="selectOption(this, 2)">I use it sometimes, but I'm only scratching the surface</div>
+        <div class="option" data-value="hitormiss" onclick="selectOption(this, 2)">I use it regularly, but my results are hit or miss</div>
+        <div class="option" data-value="comfortable" onclick="selectOption(this, 2)">I'm pretty comfortable, but I want to go deeper</div>
+      </div>
+    </div>
+
+    <!-- Question 3: Frustration -->
+    <div class="question-screen" id="q3">
+      <div class="question-number">Question 3 of 6</div>
+      <div class="question-text">What's your biggest frustration with AI right now?</div>
+      <div class="options">
+        <div class="option" data-value="start" onclick="selectOption(this, 3)">I don't know where to start</div>
+        <div class="option" data-value="results" onclick="selectOption(this, 3)">I can't get it to give me what I actually want</div>
+        <div class="option" data-value="tools" onclick="selectOption(this, 3)">I don't know which tools to use or when</div>
+        <div class="option" data-value="time" onclick="selectOption(this, 3)">I know it could do more—I just don't have time to figure it out</div>
+      </div>
+    </div>
+
+    <!-- Question 4: Learning Style -->
+    <div class="question-screen" id="q4">
+      <div class="question-number">Question 4 of 6</div>
+      <div class="question-text">How do you learn best?</div>
+      <div class="options">
+        <div class="option" data-value="self" onclick="selectOption(this, 4)">Give me the materials and let me go at my own pace</div>
+        <div class="option" data-value="structure" onclick="selectOption(this, 4)">I like structure—a clear path with deadlines helps</div>
+        <div class="option" data-value="doing" onclick="selectOption(this, 4)">I learn by doing—I need to work on a real project</div>
+        <div class="option" data-value="done" onclick="selectOption(this, 4)">Just set it up for me—I'd rather have someone implement it</div>
+      </div>
+    </div>
+
+    <!-- Question 5: Commitment -->
+    <div class="question-screen" id="q5">
+      <div class="question-number">Question 5 of 6</div>
+      <div class="question-text">How soon do you want to see results?</div>
+      <div class="options">
+        <div class="option" data-value="exploring" onclick="selectOption(this, 5)">No rush—I'm exploring</div>
+        <div class="option" data-value="weeks" onclick="selectOption(this, 5)">In the next few weeks—I'm ready to learn</div>
+        <div class="option" data-value="asap" onclick="selectOption(this, 5)">ASAP—I have something specific I want to use AI for</div>
+        <div class="option" data-value="yesterday" onclick="selectOption(this, 5)">Yesterday—I need this working now</div>
+      </div>
+    </div>
+
+    <!-- Question 6: Excitement -->
+    <div class="question-screen" id="q6">
+      <div class="question-number">Question 6 of 6</div>
+      <div class="question-text">What sounds most exciting to you?</div>
+      <div class="options">
+        <div class="option" data-value="busywork" onclick="selectOption(this, 6)">Using AI to knock out emails, reports, and busywork faster</div>
+        <div class="option" data-value="thinking" onclick="selectOption(this, 6)">Having AI help me think through decisions and strategy</div>
+        <div class="option" data-value="building" onclick="selectOption(this, 6)">Building something—a project, a side hustle, a creative idea</div>
+        <div class="option" data-value="family" onclick="selectOption(this, 6)">Teaching my kids or family how to use AI together</div>
+      </div>
+    </div>
+
+    <!-- Email Capture -->
+    <div class="question-screen email-screen" id="email">
+      <h2>Almost there!</h2>
+      <p>Where should we send your personalized results?</p>
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" id="userName" placeholder="Your first name">
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="userEmail" placeholder="you@example.com">
+      </div>
+      <button class="btn" onclick="submitEmail()" style="width: 100%; margin-top: 16px;">Show me what's possible →</button>
+      <p class="email-note">We'll show you exactly what AI can do for what matters to you.</p>
+    </div>
+
+    <!-- Loading -->
+    <div class="question-screen" id="loading">
+      <div class="loading">
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+      </div>
+      <p style="text-align: center; color: var(--ink-muted);">Finding what's possible for you...</p>
+    </div>
+
+    <!-- Results: Self-Paced -->
+    <div class="question-screen results-screen" id="result-selfpaced">
+      <div class="result-badge">Your Path: Self-Paced Course</div>
+      <h2 id="selfpaced-headline">You're ready to make AI work for what matters.</h2>
+      <div class="motivation-callout" id="selfpaced-motivation">
+        <p>Loading personalized message...</p>
+      </div>
+      <p class="description">
+        Most people use AI wrong. They type a question, get a generic answer, and think "that's it?"
+        <br><br>
+        The problem isn't AI—it's the approach. The 4 Cs framework (Context, Curiosity, Creative, Critical) gives you a way of thinking that works with any AI tool—today and whatever comes next.
+      </p>
+      <div class="use-cases" id="selfpaced-usecases">
+        <h3>What becomes possible:</h3>
+        <ul>
+          <li>Loading use cases...</li>
+        </ul>
+      </div>
+      <div class="features">
+        <h3>What you'll get:</h3>
+        <ul>
+          <li>The 4 Cs thinking framework for any AI tool</li>
+          <li>Real use cases for work AND life</li>
+          <li>Video curriculum you can watch anytime</li>
+          <li>Workbooks, reference cards, and scenario guides</li>
+          <li>Lifetime access—go at your own pace</li>
+        </ul>
+      </div>
+      <div class="cta-buttons">
+        <a href="YOUR_COURSE_LINK" target="_top" class="btn">Coming Soon — $300</a>
+      </div>
+      <p class="price">Self-paced. Lifetime access. Start whenever you're ready.</p>
+    </div>
+
+    <!-- Results: Cohort -->
+    <div class="question-screen results-screen" id="result-cohort">
+      <div class="result-badge">Your Path: Live Cohort</div>
+      <h2 id="cohort-headline">You want to learn AI with real people and real support.</h2>
+      <div class="motivation-callout" id="cohort-motivation">
+        <p>Loading personalized message...</p>
+      </div>
+      <p class="description">
+        Learning AI alone is hard. You try something, it doesn't work, and there's nobody to ask. The cohort changes that—8 weeks with a small group, learning a thinking framework together, with real conversations and hands-on practice.
+      </p>
+      <div class="use-cases" id="cohort-usecases">
+        <h3>What becomes possible:</h3>
+        <ul>
+          <li>Loading use cases...</li>
+        </ul>
+      </div>
+      <div class="features">
+        <h3>What's included:</h3>
+        <ul>
+          <li>8 weekly live sessions (small group, 10-15 people)</li>
+          <li>The 4 Cs framework—through real stories, then real AI</li>
+          <li>Hands-on practice every week—not just theory</li>
+          <li>Build something real for your work and life</li>
+          <li>2 one-on-one sessions after the program</li>
+          <li>All course materials and resources</li>
+        </ul>
+      </div>
+      <div class="cta-buttons">
+        <a href="YOUR_COHORT_LINK" target="_top" class="btn">Join the Founding Cohort — $2,000</a>
+      </div>
+      <p class="price">8 weeks live. Small group. 2 post-program one-on-ones included.</p>
+    </div>
+
+    <!-- Results: Consulting -->
+    <div class="question-screen results-screen" id="result-consulting">
+      <div class="result-badge">Your Path: Consulting</div>
+      <h2 id="consulting-headline">You don't have time to figure this out. You need it done.</h2>
+      <div class="motivation-callout" id="consulting-motivation">
+        <p>Loading personalized message...</p>
+      </div>
+      <p class="description">
+        You know AI matters. But you're running a business—you don't have weeks to learn it yourself. You need someone who understands AI AND your situation to come in and make it happen.
+      </p>
+      <div class="use-cases" id="consulting-usecases">
+        <h3>What becomes possible:</h3>
+        <ul>
+          <li>Loading use cases...</li>
+        </ul>
+      </div>
+      <div class="features">
+        <h3>What we do together:</h3>
+        <ul>
+          <li>Understand your business and find the real opportunities</li>
+          <li>Build custom AI systems for how you actually work</li>
+          <li>Train your team so everyone's confident</li>
+          <li>Stay on as your AI partner—not a one-time vendor</li>
+        </ul>
+      </div>
+      <div class="cta-buttons">
+        <a href="YOUR_CONSULTING_LINK" target="_top" class="btn">Book a Free Strategy Call</a>
+      </div>
+      <p class="price">30 minutes. No obligation. Let's talk about what AI can do for your business.</p>
+    </div>
+  </div>
+
+  <script>
+    // Quiz State
+    const answers = {};
+    let currentQuestion = 0;
+    const totalQuestions = 6;
+
+    // Motivation-based content
+    const motivationContent = {
+      family: {
+        headline: "You want more time for the people who matter.",
+        callout: "You said you'd spend more time with <strong>family and friends</strong>. That's what matters most to you—and AI can give you those hours back.",
+        useCases: [
+          "Plan family trips and activities in minutes, not hours",
+          "Handle work tasks faster so you can be present at home",
+          "Do homework projects with your kids using AI as a learning partner",
+          "Organize family life—meals, schedules, decisions—with less mental load"
+        ]
+      },
+      career: {
+        headline: "You want to become the person everyone turns to.",
+        callout: "You said you'd use extra time to <strong>get ahead at work</strong>. AI can make you the most valuable person in the room.",
+        useCases: [
+          "Draft emails, reports, and presentations in a fraction of the time",
+          "Prepare for negotiations with instant research and analysis",
+          "Become the go-to AI person your team relies on",
+          "Make better decisions with AI-assisted strategic thinking"
+        ]
+      },
+      project: {
+        headline: "You've got an idea. AI can help you build it.",
+        callout: "You said you'd finally <strong>start that project</strong> you've been sitting on. Let's make it happen.",
+        useCases: [
+          "Turn your idea into a concrete plan with AI brainstorming",
+          "Create content, copy, or products faster than you thought possible",
+          "Research markets, competitors, and opportunities instantly",
+          "Build a side project while keeping your day job"
+        ]
+      },
+      breathing: {
+        headline: "You just want life to feel less overwhelming.",
+        callout: "You said you'd use extra time for <strong>some breathing room</strong>. That's not a small thing—AI can help you get there.",
+        useCases: [
+          "Automate the tasks that drain your energy",
+          "Get quick answers instead of endless Google rabbit holes",
+          "Plan meals with what's in your fridge",
+          "Handle life admin in minutes instead of hours"
+        ]
+      }
+    };
+
+    // Excitement-based additional use cases
+    const excitementUseCases = {
+      busywork: "Knock out emails, reports, and documentation 10x faster",
+      thinking: "Use AI as a thought partner for decisions and strategy",
+      building: "Create something real—content, products, or projects",
+      family: "Learn alongside your kids and explore topics together"
+    };
+
+    // Scoring weights
+    const scoring = {
+      // Q2: Current state
+      q2: {
+        'barely': { selfpaced: 2, cohort: 0, consulting: 0 },
+        'surface': { selfpaced: 2, cohort: 1, consulting: 0 },
+        'hitormiss': { selfpaced: 0, cohort: 2, consulting: 1 },
+        'comfortable': { selfpaced: 0, cohort: 2, consulting: 1 }
+      },
+      // Q3: Frustration
+      q3: {
+        'start': { selfpaced: 2, cohort: 0, consulting: 0 },
+        'results': { selfpaced: 1, cohort: 2, consulting: 0 },
+        'tools': { selfpaced: 2, cohort: 1, consulting: 0 },
+        'time': { selfpaced: 0, cohort: 1, consulting: 3 }
+      },
+      // Q4: Learning style
+      q4: {
+        'self': { selfpaced: 3, cohort: 0, consulting: 0 },
+        'structure': { selfpaced: 0, cohort: 3, consulting: 0 },
+        'doing': { selfpaced: 0, cohort: 3, consulting: 0 },
+        'done': { selfpaced: 0, cohort: 0, consulting: 3 }
+      },
+      // Q5: Commitment
+      q5: {
+        'exploring': { selfpaced: 2, cohort: 0, consulting: 0 },
+        'weeks': { selfpaced: 1, cohort: 2, consulting: 0 },
+        'asap': { selfpaced: 0, cohort: 2, consulting: 1 },
+        'yesterday': { selfpaced: 0, cohort: 0, consulting: 3 }
+      }
+    };
+
+    function startQuiz() {
+      document.getElementById('intro').classList.remove('active');
+      document.getElementById('q1').classList.add('active');
+      updateProgress(1);
+    }
+
+    function selectOption(element, questionNum) {
+      // Remove selected from siblings
+      const options = element.parentElement.querySelectorAll('.option');
+      options.forEach(opt => opt.classList.remove('selected'));
+
+      // Add selected to clicked
+      element.classList.add('selected');
+
+      // Store answer
+      answers[`q${questionNum}`] = element.dataset.value;
+
+      // Move to next question after brief delay
+      setTimeout(() => {
+        document.getElementById(`q${questionNum}`).classList.remove('active');
+
+        if (questionNum < totalQuestions) {
+          document.getElementById(`q${questionNum + 1}`).classList.add('active');
+          updateProgress(questionNum + 1);
+        } else {
+          document.getElementById('email').classList.add('active');
+          updateProgress(totalQuestions + 1);
+        }
+      }, 300);
+    }
+
+    function updateProgress(step) {
+      const progress = (step / (totalQuestions + 1)) * 100;
+      document.getElementById('progress').style.width = `${progress}%`;
+    }
+
+    function submitEmail() {
+      const name = document.getElementById('userName').value.trim();
+      const email = document.getElementById('userEmail').value.trim();
+
+      if (!name || !email) {
+        alert('Please enter your name and email');
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        alert('Please enter a valid email address');
+        return;
+      }
+
+      // Show loading
+      document.getElementById('email').classList.remove('active');
+      document.getElementById('loading').classList.add('active');
+
+      // Calculate result
+      const resultData = calculateResult();
+
+      // Personalize results
+      personalizeResults(resultData.result);
+
+      // Send to Google Sheets
+      sendToGoogleSheets(name, email, resultData);
+
+      // Show result after delay
+      setTimeout(() => {
+        document.getElementById('loading').classList.remove('active');
+        document.getElementById(`result-${resultData.result}`).classList.add('active');
+        document.getElementById('progress').style.width = '100%';
+      }, 1500);
+    }
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function calculateResult() {
+      const scores = { selfpaced: 0, cohort: 0, consulting: 0 };
+
+      // Calculate scores from answers (Q2-Q5)
+      for (let i = 2; i <= 5; i++) {
+        const question = `q${i}`;
+        const answer = answers[question];
+        if (scoring[question] && scoring[question][answer]) {
+          scores.selfpaced += scoring[question][answer].selfpaced;
+          scores.cohort += scoring[question][answer].cohort;
+          scores.consulting += scoring[question][answer].consulting;
+        }
+      }
+
+      console.log('Scores:', scores);
+
+      let result;
+      // Consulting wins if score >= 5 (strong signals for done-for-me)
+      if (scores.consulting >= 5) {
+        result = 'consulting';
+      } else if (scores.cohort >= scores.selfpaced) {
+        result = 'cohort';
+      } else {
+        result = 'selfpaced';
+      }
+
+      return { result, scores };
+    }
+
+    function personalizeResults(tier) {
+      const motivation = answers.q1;
+      const excitement = answers.q6;
+      const content = motivationContent[motivation];
+
+      // Update headline
+      document.getElementById(`${tier}-headline`).textContent = content.headline;
+
+      // Update motivation callout
+      document.getElementById(`${tier}-motivation`).innerHTML = `<p>${content.callout}</p>`;
+
+      // Build use cases list
+      let useCasesHtml = '<h3>What becomes possible:</h3><ul>';
+      content.useCases.forEach(uc => {
+        useCasesHtml += `<li>${uc}</li>`;
+      });
+      // Add excitement-based use case if different from motivation
+      if (excitement && excitementUseCases[excitement]) {
+        const excitementUC = excitementUseCases[excitement];
+        if (!content.useCases.includes(excitementUC)) {
+          useCasesHtml += `<li>${excitementUC}</li>`;
+        }
+      }
+      useCasesHtml += '</ul>';
+      document.getElementById(`${tier}-usecases`).innerHTML = useCasesHtml;
+    }
+
+    function sendToGoogleSheets(name, email, resultData) {
+      // Replace with your Google Apps Script Web App URL
+      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxU2BqgL5I8-ZNf1ATlPelKPJw1kFd_1UqKGpM6gose5zaUhvDx81Gip_prE1oEZVlUvQ/exec';
+
+      const data = {
+        name: name,
+        email: email,
+        result: resultData.result,
+        selfpacedScore: resultData.scores.selfpaced,
+        cohortScore: resultData.scores.cohort,
+        consultingScore: resultData.scores.consulting,
+        motivation: answers.q1,
+        excitement: answers.q6,
+        answers: answers,
+        timestamp: new Date().toISOString()
+      };
+
+      // Send data (fire and forget)
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      }).catch(err => console.log('Sheet submission:', err));
+    }
+  </script>
+</body>
+</html>
