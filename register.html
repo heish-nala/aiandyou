@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'><circle cx='150' cy='150' r='148' fill='%231a1a2e'/><text x='95' y='118' font-family='sans-serif' font-weight='700' font-size='54' fill='white' text-anchor='middle'>a</text><text x='211' y='133' font-family='sans-serif' font-weight='900' font-size='49' fill='white' text-anchor='middle'>i</text><text x='150' y='162' font-family='sans-serif' font-weight='400' font-size='36' fill='%23a8d4c2' text-anchor='middle'>&amp;</text><path d='M 68.5 178 C 73 265 227 265 231.5 178' fill='none' stroke='white' stroke-width='14'/></svg>">
+  <title>Secure Your Spot — AI & You</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&display=swap" rel="stylesheet">
+  <style>
+    :root{--ink:#1a1a2e;--ink-light:#4a4a5a;--ink-muted:#8a8a9a;--cream:#faf9f7;--white:#fff;--accent:#2d5a4a;--accent-light:#e8f0ed;--border:#e5e5e0}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+    nav{padding:20px 40px;display:flex;align-items:center}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .logo-text{font-family:'Instrument Serif',serif;font-size:1.5rem;color:var(--ink)}
+    main{flex:1;display:flex;align-items:center;justify-content:center;padding:60px 24px}
+    .card{background:var(--white);border-radius:16px;border:1px solid var(--border);padding:48px;max-width:520px;width:100%;box-shadow:0 4px 24px rgba(26,26,46,.08)}
+    .card-label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:12px}
+    .card h1{font-family:'Instrument Serif',serif;font-size:2rem;font-weight:400;line-height:1.2;margin-bottom:8px}
+    .card p{color:var(--ink-light);font-size:.95rem;margin-bottom:32px;line-height:1.6}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .field{margin-bottom:20px}
+    .field label{display:block;font-size:.85rem;font-weight:500;color:var(--ink);margin-bottom:6px}
+    .field input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:8px;font-size:.95rem;font-family:inherit;background:var(--cream);color:var(--ink);transition:border-color .2s}
+    .field input:focus{outline:none;border-color:var(--accent);background:var(--white)}
+    .field .optional{color:var(--ink-muted);font-weight:400;font-size:.8rem}
+    .btn-submit{width:100%;padding:16px;background:var(--ink);color:var(--white);border:none;border-radius:8px;font-size:1rem;font-weight:600;font-family:inherit;cursor:pointer;transition:background .2s;margin-top:8px}
+    .btn-submit:hover{background:var(--accent)}
+    .btn-submit:disabled{opacity:.6;cursor:not-allowed}
+    .fine-print{font-size:.8rem;color:var(--ink-muted);text-align:center;margin-top:16px}
+    #success{display:none;text-align:center;padding:16px 0}
+    #success h2{font-family:'Instrument Serif',serif;font-size:1.75rem;font-weight:400;margin-bottom:8px;color:var(--accent)}
+    #success p{color:var(--ink-light);font-size:.95rem}
+    #error-msg{display:none;color:#c0392b;font-size:.85rem;margin-top:12px;text-align:center}
+    @media(max-width:480px){.form-row{grid-template-columns:1fr}.card{padding:32px 24px}}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo">
+      <img src="logo.png" width="36" height="36" alt="AI & You logo" style="border-radius:50%">
+      <span class="logo-text">AI & You</span>
+    </a>
+  </nav>
+  <main>
+    <div class="card">
+      <div id="form-section">
+        <div class="card-label">Group Coaching — 2026</div>
+        <h1>Secure Your Spot</h1>
+        <p>Space is limited to 15 people. Drop your details and Alan will reach out personally to confirm your place.</p>
+        <form id="reg-form">
+          <div class="form-row">
+            <div class="field">
+              <label for="fname">First Name</label>
+              <input type="text" id="fname" name="fname" required placeholder="Jane">
+            </div>
+            <div class="field">
+              <label for="lname">Last Name</label>
+              <input type="text" id="lname" name="lname" required placeholder="Smith">
+            </div>
+          </div>
+          <div class="field">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required placeholder="jane@example.com">
+          </div>
+          <div class="field">
+            <label for="phone">Phone <span class="optional">(optional)</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="+1 555 000 0000">
+          </div>
+          <button type="submit" class="btn-submit" id="submit-btn">Secure My Spot →</button>
+          <div id="error-msg">Something went wrong. Please try again or email alan@allsolutions.consulting</div>
+        </form>
+        <p class="fine-print">No spam. Alan will only contact you about this program.</p>
+      </div>
+      <div id="success">
+        <h2>You're on the list!</h2>
+        <p>Alan will be in touch soon to confirm your spot.<br>Keep an eye on your inbox.</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/a/macros/allsolutions.consulting/s/AKfycbyONu3oXO6ZGAX5ULA2TahOHYTt8QLa-ho2v80E7SJsuHkosZxVPcSXxLtQFwWIIpIG3A/exec';
+
+    document.getElementById('reg-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+      document.getElementById('error-msg').style.display = 'none';
+
+      const data = {
+        fname: document.getElementById('fname').value,
+        lname: document.getElementById('lname').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value
+      };
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(data)
+        });
+        document.getElementById('form-section').style.display = 'none';
+        document.getElementById('success').style.display = 'block';
+      } catch(err) {
+        btn.disabled = false;
+        btn.textContent = 'Secure My Spot →';
+        document.getElementById('error-msg').style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
